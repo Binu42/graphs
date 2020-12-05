@@ -31,16 +31,18 @@ d3.json("data/buildings.json").then((data) => {
 		.attr("width", 400)
 		.attr("height", 400);
 
-	const y = d3.scaleLinear().domain([0, 850]).range([0, 400]);
+	const x = d3.scaleBand().domain(data.map(city => city.name)).range([0, 400]).paddingInner(0.3).paddingOuter(0.3);
+
+	const y = d3.scaleLinear().domain([0, d3.max(data, d => d.height)]).range([0, 400]);
 
 	const rectangles = svg.selectAll("rect").data(data);
 
 	rectangles.enter()
 		.append("rect")
-		.attr("x", (d, i) => {
-			return (i * 60);
+		.attr("x", (d) => {
+			return x(d.name);
 		})
-		.attr("y", 20)
+		.attr("y", x.bandwidth)
 		.attr("height", (d, i) => {
 			return y(d.height);
 		})
