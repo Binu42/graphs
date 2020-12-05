@@ -64,7 +64,7 @@ d3.json("data/buildings.json").then((data) => {
 
 	const x = d3.scaleBand().domain(data.map(city => city.name)).range([0, width]).paddingInner(0.3).paddingOuter(0.3);
 
-	const y = d3.scaleLinear().domain([0, d3.max(data, d => d.height)]).range([0, height]);
+	const y = d3.scaleLinear().domain([0, d3.max(data, d => d.height)]).range([height, 0]);
 
 	const xAxisCall = d3.axisBottom(x);
 	g.append("g")
@@ -88,8 +88,8 @@ d3.json("data/buildings.json").then((data) => {
 	rectangles.enter()
 		.append("rect")
 		.attr("x", (d) => x(d.name))
-		.attr("y", 0)
-		.attr("height", (d, i) => y(d.height))
+		.attr("y", d => y(d.height))
+		.attr("height", (d, i) => height - y(d.height))
 		.attr("width", x.bandwidth)
 		.attr("fill", (data) => {
 			return 'black';
