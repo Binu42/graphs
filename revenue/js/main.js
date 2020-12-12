@@ -27,7 +27,7 @@ g.append("text")
   .attr("transform", "rotate(-90)")
   .text("Revenue");
 
-d3.json("../data/revenues.json").then(data => {
+d3.json("data/revenues.json").then(data => {
   console.log(data);
   // clean
   data.forEach(d => d.revenue = +d.revenue);
