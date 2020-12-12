@@ -1,10 +1,11 @@
-const margin = { left: 100, right: 10, top: 10, bottom: 150 };
+const margin = { left: 80, right: 20, top: 50, bottom: 100 };
 const width = 600 - margin.left - margin.right;
 const height = 400 - margin.top - margin.bottom;
 
 const g = d3.select("#chart-area")
-  .attr("width", width - margin.left - margin.right)
-  .attr("height", height - margin.top - margin.bottom)
+  .append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
   .append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`)
 
@@ -12,7 +13,7 @@ const g = d3.select("#chart-area")
 g.append("text")
   .attr("class", "x-axis--label")
   .attr("x", width / 2)
-  .attr("y", height + 110)
+  .attr("y", height + 50)
   .attr("font-size", "20px")
   .attr("Months");
 
