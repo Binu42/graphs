@@ -6,7 +6,8 @@ body {
   min-height: 100vh;
 }
 
-#graphs a {
+#graphs a,
+footer a {
   text-decoration: none;
   color: unset;
 }
