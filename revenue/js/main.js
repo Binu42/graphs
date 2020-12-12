@@ -15,7 +15,7 @@ g.append("text")
   .attr("x", width / 2)
   .attr("y", height + 50)
   .attr("font-size", "20px")
-  .attr("Months");
+  .text("Months");
 
 // y-axis label
 g.append("text")
@@ -45,7 +45,7 @@ d3.json("data/revenues.json").then(data => {
     .call(xAxisCall);
 
   const yAxisCall = d3.axisLeft(y)
-    .tickFormat(d => `$ ${d}`);
+    .tickFormat(d => `₹ ${d}`);
   g.append("g")
     .attr("class", "y-axis")
     .call(yAxisCall)
