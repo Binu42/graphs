@@ -2,7 +2,7 @@ let margin = { left: 80, right: 20, top: 50, bottom: 100 };
 let height = 500 - margin.top - margin.bottom,
 	width = 800 - margin.left - margin.right;
 
-let continents = ["Europe", "Asia", "America", "Africa"];
+let continents = ["europe", "americas", "asia", "africa"];
 
 let g = d3.select("#chart-area")
 	.append("svg")
