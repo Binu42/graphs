@@ -7,6 +7,6 @@
   {
     "name": "Revenue-BarPlot",
     "route": "./revenue/index.html",
-    "description": "used basics learned skills of SVG and D3 to built revenue plot of coffee shop."
+    "description": "used basics learned skills of SVG and D3 to built revenue plot of coffee shop, learnt transition and update in graph."
   }
 ]
