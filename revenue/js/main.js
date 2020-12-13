@@ -27,30 +27,56 @@ g.append("text")
   .attr("transform", "rotate(-90)")
   .text("Revenue");
 
+// x-axis scale
+const x = d3.scaleBand().padding(.2);
+
+// y-axis scale
+const y = d3.scaleLinear().range([height, 0]);
+
+const xAxisGroup = g.append("g")
+  .attr("class", "x-axis")
+  .attr("transform", `translate(0, ${height})`);
+
+const yAxisGroup = g.append("g")
+  .attr("class", "y-axis");
+
 d3.json("data/revenues.json").then(data => {
   console.log(data);
   // clean
   data.forEach(d => d.revenue = +d.revenue);
 
-  // x-axis scale
-  const x = d3.scaleBand().domain(data.map(rev => rev.month)).range([0, width]).padding(.2);
+  d3.interval(() => {
+    updateGraph(data);
+  }, 1000);
 
-  // y-axis scale
-  const y = d3.scaleLinear().domain([0, d3.max(data, d => d.revenue)]).range([height, 0]);
+  updateGraph(data);
+})
+
+function updateGraph(data) {
+  y.domain([0, d3.max(data, d => d.revenue)]);
+  x.domain(data.map(rev => rev.month)).range([0, width]);
 
   const xAxisCall = d3.axisBottom(x);
-  g.append("g")
-    .attr("class", "x-axis")
-    .attr("transform", `translate(0, ${height})`)
-    .call(xAxisCall);
+  xAxisGroup.call(xAxisCall);
 
   const yAxisCall = d3.axisLeft(y)
     .tickFormat(d => `₹ ${d}`);
-  g.append("g")
-    .attr("class", "y-axis")
-    .call(yAxisCall)
+  yAxisGroup.call(yAxisCall)
 
+  // JOIN new data with old elements
   const rectangles = g.selectAll("rect").data(data);
+
+  // EXIT old elements not present in new data.
+  rectangles.exit().remove();
+
+  // UPDATE old elements present in new data.
+  rectangles
+    .attr("x", (d) => x(d.month))
+    .attr("y", d => y(d.revenue))
+    .attr("height", (d, i) => height - y(d.revenue))
+    .attr("width", x.bandwidth)
+
+  // ENTER new elements present in new data.
   rectangles.enter()
     .append("rect")
     .attr("x", (d) => x(d.month))
@@ -58,4 +84,4 @@ d3.json("data/revenues.json").then(data => {
     .attr("height", (d, i) => height - y(d.revenue))
     .attr("width", x.bandwidth)
     .attr("fill", "gray");
-})
+}
