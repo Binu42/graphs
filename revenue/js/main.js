@@ -1,6 +1,8 @@
 const margin = { left: 80, right: 20, top: 50, bottom: 100 };
 const width = 600 - margin.left - margin.right;
 const height = 400 - margin.top - margin.bottom;
+let flag = true;
+const t = d3.transition().duration(750);
 
 const g = d3.select("#chart-area")
   .append("svg")
@@ -18,7 +20,7 @@ g.append("text")
   .text("Months");
 
 // y-axis label
-g.append("text")
+const yLabel = g.append("text")
   .attr("class", "y-axis--label")
   .attr("x", -(height / 2))
   .attr("y", -60)
@@ -42,46 +44,66 @@ const yAxisGroup = g.append("g")
 
 d3.json("data/revenues.json").then(data => {
   console.log(data);
-  // clean
-  data.forEach(d => d.revenue = +d.revenue);
+  // clean data ( string to num)
+  data.forEach(d => {
+    d.revenue = +d.revenue;
+    d.profit = +d.profit;
+  });
 
   d3.interval(() => {
     updateGraph(data);
+    flag = !flag;
   }, 1000);
 
   updateGraph(data);
 })
 
 function updateGraph(data) {
-  y.domain([0, d3.max(data, d => d.revenue)]);
+  const value = flag ? "revenue" : "profit";
+  y.domain([0, d3.max(data, d => d[value])]);
   x.domain(data.map(rev => rev.month)).range([0, width]);
 
   const xAxisCall = d3.axisBottom(x);
-  xAxisGroup.call(xAxisCall);
+  xAxisGroup.transition(t).call(xAxisCall);
 
   const yAxisCall = d3.axisLeft(y)
     .tickFormat(d => `₹ ${d}`);
-  yAxisGroup.call(yAxisCall)
+  yAxisGroup.transition(t).call(yAxisCall)
 
   // JOIN new data with old elements
   const rectangles = g.selectAll("rect").data(data);
 
   // EXIT old elements not present in new data.
-  rectangles.exit().remove();
+  rectangles
+    .exit()
+    .attr("fill", "red")
+    .transition(t)
+    .attr("y", y(0))
+    .attr("height", 0)
+    .remove();
 
   // UPDATE old elements present in new data.
   rectangles
+    .transition(t)
     .attr("x", (d) => x(d.month))
-    .attr("y", d => y(d.revenue))
-    .attr("height", (d, i) => height - y(d.revenue))
+    .attr("y", d => y(d[value]))
+    .attr("height", (d, i) => height - y(d[value]))
     .attr("width", x.bandwidth)
 
   // ENTER new elements present in new data.
   rectangles.enter()
     .append("rect")
     .attr("x", (d) => x(d.month))
-    .attr("y", d => y(d.revenue))
-    .attr("height", (d, i) => height - y(d.revenue))
     .attr("width", x.bandwidth)
-    .attr("fill", "gray");
+    .attr("fill", "gray")
+    .attr("y", y(0))
+    .attr("height", 0)
+    .attr("fill-opacity", 0)
+    .transition(t)
+    .attr("y", d => y(d[value]))
+    .attr("height", (d, i) => height - y(d[value]))
+    .attr("fill-opacity", 1);
+
+  var label = flag ? "Revenue" : "Profit";
+  yLabel.text(label);
 }
