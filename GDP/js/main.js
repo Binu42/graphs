@@ -94,6 +94,7 @@ g.append("g")
 	.attr("class", "y axis")
 	.call(yAxisCall);
 
+
 d3.json("data/data.json").then((data) => {
 	// Clean data
 	const formattedData = data.map((year) => {
@@ -107,12 +108,61 @@ d3.json("data/data.json").then((data) => {
 		})
 	});
 
-	// Run the code every 0.1 second
-	d3.interval(() => {
-		// loop back
-		time = (time < 214) ? time + 1 : 0
+	let interval;
+
+	document.querySelector("#step-back").addEventListener("click", () => {
+		time -= 1;
+		document.querySelector("#year").innerHTML = 1800 + time;
 		update(formattedData[time]);
-	}, 100);
+	});
+
+
+	document.querySelector("#step-forward").addEventListener("click", () => {
+		time += 1;
+		document.querySelector("#year").innerHTML = 1800 + time;
+		update(formattedData[time]);
+	});
+
+	let timeInterval = 100;
+	document.getElementById("interval-input").addEventListener("change", (e => {
+		timeInterval = e.target.value;
+		clearInterval(interval);
+		if (interval._time)
+			interval.stop();
+		interval = setInterval(() => {
+			// At the end of our data, loop back
+			time = (time < 214) ? time + 1 : 0
+			document.querySelector("#year").innerHTML = 1800 + time;
+			update(formattedData[time]);
+		}, timeInterval);
+	}));
+
+	document.querySelector("#play").addEventListener("click", (event) => {
+		document.querySelector("#pause").removeAttribute("disabled");
+		event.target.setAttribute("disabled", "");
+		interval = setInterval(() => {
+			// At the end of our data, loop back
+			time = (time < 214) ? time + 1 : 0
+			document.querySelector("#year").innerHTML = 1800 + time;
+			update(formattedData[time]);
+		}, timeInterval);
+	});
+
+	document.querySelector("#pause").addEventListener("click", (event) => {
+		document.querySelector("#play").removeAttribute("disabled");
+		event.target.setAttribute("disabled", "");
+		clearInterval(interval);
+		if (interval._time)
+			interval.stop();
+	});
+
+	// Run the code every 0.1 second
+	interval = d3.interval(() => {
+		// loop back
+		time = (time < 214) ? time + 1 : 0;
+		document.querySelector("#year").innerHTML = 1800 + time;
+		update(formattedData[time]);
+	}, timeInterval);
 
 	// First run of the visualization
 	update(formattedData[0]);
