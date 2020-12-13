@@ -13,5 +13,10 @@
     "name": "Revenue-Scatter",
     "route": "./revenue-scatter/index.html",
     "description": "Scatter plot of revenue used transition, merge, and basic svg property to plot circles."
+  },
+  {
+    "name": "GDP and life expectancy",
+    "route": "./GDP/index.html",
+    "description": "GDP and life expectancy visualization of countries"
   }
 ]
