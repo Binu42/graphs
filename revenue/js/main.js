@@ -43,7 +43,7 @@ const yAxisGroup = g.append("g")
   .attr("class", "y-axis");
 
 d3.json("data/revenues.json").then(data => {
-  console.log(data);
+  // console.log(data);
   // clean data ( string to num)
   data.forEach(d => {
     d.revenue = +d.revenue;
@@ -51,7 +51,8 @@ d3.json("data/revenues.json").then(data => {
   });
 
   d3.interval(() => {
-    updateGraph(data);
+    const newData = flag ? data : data.slice(1);
+    updateGraph(newData);
     flag = !flag;
   }, 1000);
 
@@ -71,7 +72,7 @@ function updateGraph(data) {
   yAxisGroup.transition(t).call(yAxisCall)
 
   // JOIN new data with old elements
-  const rectangles = g.selectAll("rect").data(data);
+  const rectangles = g.selectAll("rect").data(data, (data) => data.month);
 
   // EXIT old elements not present in new data.
   rectangles
@@ -82,13 +83,13 @@ function updateGraph(data) {
     .attr("height", 0)
     .remove();
 
-  // UPDATE old elements present in new data.
-  rectangles
-    .transition(t)
-    .attr("x", (d) => x(d.month))
-    .attr("y", d => y(d[value]))
-    .attr("height", (d, i) => height - y(d[value]))
-    .attr("width", x.bandwidth)
+  // // UPDATE old elements present in new data.
+  // rectangles
+  //   .transition(t)
+  //   .attr("x", (d) => x(d.month))
+  //   .attr("y", d => y(d[value]))
+  //   .attr("height", (d, i) => height - y(d[value]))
+  //   .attr("width", x.bandwidth)
 
   // ENTER new elements present in new data.
   rectangles.enter()
@@ -99,8 +100,11 @@ function updateGraph(data) {
     .attr("y", y(0))
     .attr("height", 0)
     .attr("fill-opacity", 0)
+    .merge(rectangles)
     .transition(t)
+    .attr("x", (d) => x(d.month))
     .attr("y", d => y(d[value]))
+    .attr("width", x.bandwidth)
     .attr("height", (d, i) => height - y(d[value]))
     .attr("fill-opacity", 1);
 

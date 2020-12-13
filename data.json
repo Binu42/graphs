@@ -8,5 +8,10 @@
     "name": "Revenue-BarPlot",
     "route": "./revenue/index.html",
     "description": "used basics learned skills of SVG and D3 to built revenue plot of coffee shop, learnt transition and update in graph."
+  },
+  {
+    "name": "Revenue-Scatter",
+    "route": "./revenue-scatter/index.html",
+    "description": "Scatter plot of revenue used transition, merge, and basic svg property to plot circles."
   }
 ]
